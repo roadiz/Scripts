@@ -6,7 +6,7 @@ This script is made for creating automatically a Roadiz website folder structure
 
 **Make sure you have *Git*, *Composer*, *NPM* (NodeJS) and *Grunt* globally installed on your server.**
 
-* Rename `create_roadiz.default.sh` file to `create_site.sh`
+* Rename `create_roadiz.default.sh` file to `create_roadiz.sh`
 * Edit your own folder configuration and mysql user credentials
 * Set `create_roadiz.sh` executable using `chmod +x create_roadiz.sh`
-* Call `./create_roadiz.sh` to launch Roadiz creation wizard.
+* Call `sh create_roadiz.sh` to launch Roadiz creation wizard.
