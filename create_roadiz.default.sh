@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Autor: Ambroise Maupate
+# Author: Ambroise Maupate
 # Contributor: Maxime Constantinian
 
 echo -e "\033[36m------------------ ROADIZ CMS -------------------\033[0m"
@@ -53,7 +53,7 @@ cd $APACHE_ROOT$destination;
 $GIT clone -b $ROADIZ_BRANCH $ROADIZ_URL ./;
 echo -e "\033[32m* Download latest Roadiz sources - OK\033[0m";
 
-$COMPOSER install;
+$COMPOSER install --no-dev;
 $COMPOSER dumpautoload -o;
 echo -e "\033[32m* Download latest Roadiz dependencies - OK\033[0m";
 
