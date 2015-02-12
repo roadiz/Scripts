@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Author: Ambroise Maupate
 # Contributor: Maxime Constantinian
+# Contributor: Maxime Bérard
 
 echo -e "\033[36m------------------ ROADIZ CMS -------------------\033[0m"
-echo -e "\033[36m--------- New Roadiz baseTheme on `hostname` ------\033[0m"
+echo -e "\033[36m------- New Roadiz BaseTheme on `hostname` ------\033[0m"
 echo -e "\033[36m-------------------------------------------------\033[0m"
 
 APACHE_ROOT="/var/www/"
@@ -21,7 +22,7 @@ GRUNT=`which grunt`
 
 cd $APACHE_ROOT;
 
-echo -e "\033[33m1. Type your site folder name and type [ENTER].\033[0m"
+echo -e "\033[33m1. Type your existing site folder name and type [ENTER].\033[0m"
 read destination;
 
 echo -e "\033[33m3. Choose a prefix for your Roadiz theme. Type it in CamelCase syntax and hit [ENTER].\033[0m"
