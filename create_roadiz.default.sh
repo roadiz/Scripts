@@ -57,7 +57,7 @@ $COMPOSER install --no-dev;
 $COMPOSER dumpautoload -o;
 echo -e "\033[32m* Download latest Roadiz dependencies - OK\033[0m";
 
-cp conf/config.default.json conf/config.json;
+cp conf/config.default.yml conf/config.yml;
 echo -e "\033[32m* Make a copy of default configuration file - OK\033[0m";
 
 bin/roadiz config --generateHtaccess
