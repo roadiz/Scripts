@@ -75,8 +75,6 @@ rm -rf ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme/.git
 echo -e "\033[32m* Delete existing Git history - OK\033[0m";
 
 mv BaseThemeApp.php ${theme_prefix}ThemeApp.php
-mv static/js/BaseTheme.js static/js/${theme_prefix}Theme.js
-mv static/js/BaseTheme.min.js static/js/${theme_prefix}Theme.min.js
 echo -e "\033[32m* Rename theme files against you theme name - OK\033[0m";
 
 LC_ALL=C $FIND ./ -type f -exec $SED -i.bak -e "s/BaseTheme/${theme_prefix}Theme/g" {} \;
