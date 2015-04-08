@@ -6,25 +6,12 @@ echo -e "\033[36m------------------ ROADIZ CMS -------------------\033[0m"
 echo -e "\033[36m--------- New Roadiz website on `hostname` ------\033[0m"
 echo -e "\033[36m-------------------------------------------------\033[0m"
 
-APACHE_ROOT="/var/www/"
-
-ROADIZ_URL="https://github.com/roadiz/roadiz.git"
-ROADIZ_BRANCH="master"
-
-THEME_URL="https://github.com/roadiz/BaseTheme.git"
-THEME_BRANCH="master"
-
-#
-# MySQL credentials
-# Change these with your own
-#
-MYSQL_HOST="localhost"
-MYSQL_USER="root"
-MYSQL_PASS="****password****"
+source config.sh
 
 GIT=`which git`
 COMPOSER=`which composer`
 NPM=`which npm`
+BOWER=`which bower`
 SED=`which sed`
 FIND=`which find`
 GRUNT=`which grunt`
@@ -88,6 +75,8 @@ echo -e "\033[32m* Rename every occurrences of BaseTheme in your theme - OK\033[
 cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme/static;
 $NPM install;
 echo -e "\033[32m* Install Grunt for your theme - OK\033[0m";
+$BOWER install;
+echo -e "\033[32m* Install Bower for your theme - OK\033[0m";
 
 $GRUNT
 echo -e "\033[32m* Launch Grunt for the first time - OK\033[0m";
