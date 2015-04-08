@@ -16,7 +16,10 @@ SED=`which sed`
 FIND=`which find`
 GRUNT=`which grunt`
 
-cd $APACHE_ROOT;
+cd $APACHE_ROOT || {
+    echo 'Your apache directory does not exist.' ;
+    exit 1;
+}
 
 echo -e "\033[33m1. Type your existing site folder name and type [ENTER].\033[0m"
 read destination;
@@ -32,7 +35,10 @@ cd $APACHE_ROOT$destination;
 #
 # BaseTheme
 #
-$GIT clone -b $THEME_BRANCH $THEME_URL ./themes/${theme_prefix}Theme;
+$GIT clone -b $THEME_BRANCH $THEME_URL ./themes/${theme_prefix}Theme || {
+    echo 'Impossible to clone BaseTheme.' ;
+    exit 1;
+}
 echo -e "\033[32m* Download Base theme sources into themes folder - OK\033[0m";
 
 cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme;
@@ -52,12 +58,21 @@ echo -e "\033[32m* Rename every occurrences of BaseTheme in your theme - OK\033[
 # Grunt
 #
 cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme/static;
-$NPM install;
+$NPM install || {
+    echo 'Impossible to install NPM.' ;
+    exit 1;
+}
 echo -e "\033[32m* Install Grunt for your theme - OK\033[0m";
-$BOWER install;
+$BOWER install || {
+    echo 'Impossible to install Bower.' ;
+    exit 1;
+}
 echo -e "\033[32m* Install Bower for your theme - OK\033[0m";
 
-$GRUNT
+$GRUNT || {
+    echo 'Impossible to launch Grunt.' ;
+    exit 1;
+}
 echo -e "\033[32m* Launch Grunt for the first time - OK\033[0m";
 
 
