@@ -6,8 +6,9 @@ echo -e "\033[36m------------------ ROADIZ CMS -------------------\033[0m"
 echo -e "\033[36m--------- New Roadiz website on `hostname` ------\033[0m"
 echo -e "\033[36m-------------------------------------------------\033[0m"
 
-source `dirname $0`/config.sh || {
-    echo 'Impossible to import your configuration.' ;
+. `dirname $0`/config.sh || {
+    echo "`dirname $0`/config.sh";
+    echo 'Impossible to import your configuration.';
     exit 1;
 }
 
