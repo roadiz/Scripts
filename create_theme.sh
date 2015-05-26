@@ -55,6 +55,7 @@ echo -e "\033[32m* Rename theme files against you theme name - OK\033[0m";
 
 LC_ALL=C $FIND ./ -type f -exec $SED -i.bak -e "s/BaseTheme/${theme_prefix}Theme/g" {} \;
 LC_ALL=C $FIND ./ -type f -exec $SED -i.bak -e "s/Base theme/${theme_prefix} theme/g" {} \;
+LC_ALL=C $FIND ./static -type f -exec $SED -i.bak -e "s/Base/${theme_prefix}/g" {} \;
 LC_ALL=C $FIND ./ -type f -name '*.bak' -exec rm -f {} \;
 echo -e "\033[32m* Rename every occurrences of BaseTheme in your theme - OK\033[0m";
 
