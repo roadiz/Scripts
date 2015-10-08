@@ -19,12 +19,12 @@ BOWER=`which bower`
 SED=`which sed`
 FIND=`which find`
 GRUNT=`which grunt`
+DEV_SAMPLE="`dirname $0`/dev.sample.php"
 
 cd $APACHE_ROOT || {
     echo 'Your apache directory does not exist.' ;
     exit 1;
 }
-
 
 echo -e "\033[33m1. Type your new website name and type [ENTER].\033[0m"
 echo -e "\033[33mThis name will be used for your web folder and your MySQL user and database name:\033[0m";
@@ -63,6 +63,9 @@ echo -e "\033[32m* Make a copy of default configuration file - OK\033[0m";
 
 bin/roadiz config --generate-htaccess
 echo -e "\033[32m* Generate .htaccess files for Apache - OK\033[0m";
+
+cp $DEV_SAMPLE ./dev.php
+echo -e "\033[32m* Copy a sample dev.php file with LAN access and preview flag - OK\033[0m";
 
 #
 # BaseTheme
