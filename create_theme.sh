@@ -18,7 +18,7 @@ NPM=`which npm`
 BOWER=`which bower`
 SED=`which sed`
 FIND=`which find`
-GRUNT=`which grunt`
+GULP=`which gulp`
 
 cd $APACHE_ROOT || {
     echo 'Your apache directory does not exist.' ;
@@ -60,25 +60,25 @@ LC_ALL=C $FIND ./ -type f -name '*.bak' -exec rm -f {} \;
 echo -e "\033[32m* Rename every occurrences of BaseTheme in your theme - OK\033[0m";
 
 #
-# Grunt
+# Gulp
 #
 cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme/static;
 $NPM install || {
     echo 'Impossible to install NPM.' ;
     exit 1;
 }
-echo -e "\033[32m* Install Grunt for your theme - OK\033[0m";
+echo -e "\033[32m* Install Gulp for your theme - OK\033[0m";
 $BOWER install || {
     echo 'Impossible to install Bower.' ;
     exit 1;
 }
 echo -e "\033[32m* Install Bower for your theme - OK\033[0m";
 
-$GRUNT || {
-    echo 'Impossible to launch Grunt.' ;
+$GULP || {
+    echo 'Impossible to launch Gulp.' ;
     exit 1;
 }
-echo -e "\033[32m* Launch Grunt for the first time - OK\033[0m";
+echo -e "\033[32m* Launch Gulp for the first time - OK\033[0m";
 
 
 #

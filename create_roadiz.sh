@@ -18,8 +18,9 @@ NPM=`which npm`
 BOWER=`which bower`
 SED=`which sed`
 FIND=`which find`
-GRUNT=`which grunt`
+GULP=`which gulp`
 DEV_SAMPLE="`dirname $0`/dev.sample.php"
+CACHE_SAMPLE="`dirname $0`/clear_cache.sample.php"
 
 cd $APACHE_ROOT || {
     echo 'Your apache directory does not exist.' ;
@@ -67,6 +68,9 @@ echo -e "\033[32m* Generate .htaccess files for Apache - OK\033[0m";
 cp $DEV_SAMPLE ./dev.php
 echo -e "\033[32m* Copy a sample dev.php file with LAN access and preview flag - OK\033[0m";
 
+cp $CACHE_SAMPLE ./clear_cache.php
+echo -e "\033[32m* Copy a sample clear_cache.php file with LAN access - OK\033[0m";
+
 #
 # BaseTheme
 #
@@ -91,25 +95,25 @@ LC_ALL=C $FIND ./ -type f -name '*.bak' -exec rm -f {} \;
 echo -e "\033[32m* Rename every occurrences of BaseTheme in your theme - OK\033[0m";
 
 #
-# Grunt
+# Gulp
 #
 cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme/static;
 $NPM install || {
     echo 'Impossible to install NPM.' ;
     exit 1;
 }
-echo -e "\033[32m* Install Grunt for your theme - OK\033[0m";
+echo -e "\033[32m* Install Gulp for your theme - OK\033[0m";
 $BOWER install || {
     echo 'Impossible to install Bower.' ;
     exit 1;
 }
 echo -e "\033[32m* Install Bower for your theme - OK\033[0m";
 
-$GRUNT || {
-    echo 'Impossible to launch Grunt.' ;
+$GULP || {
+    echo 'Impossible to launch Gulp.' ;
     exit 1;
 }
-echo -e "\033[32m* Launch Grunt for the first time - OK\033[0m";
+echo -e "\033[32m* Launch Gulp for the first time - OK\033[0m";
 
 
 #
