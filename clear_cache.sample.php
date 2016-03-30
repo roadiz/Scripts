@@ -37,7 +37,6 @@ use RZ\Roadiz\Utils\Clearer\OPCacheClearer;
 use RZ\Roadiz\Utils\Clearer\RoutingCacheClearer;
 use RZ\Roadiz\Utils\Clearer\TemplatesCacheClearer;
 use RZ\Roadiz\Utils\Clearer\TranslationsCacheClearer;
-use RZ\Roadiz\Utils\Clearer\XCacheClearer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\IpUtils;
 
@@ -86,7 +85,6 @@ $clearers = [
     new ConfigurationCacheClearer($kernel->getCacheDir()),
     new NodesSourcesUrlsCacheClearer($kernel->getService('nodesSourcesUrlCacheProvider')),
     new OPCacheClearer(),
-    new XCacheClearer(),
     // Keep doctrine at the end
     new DoctrineCacheClearer($kernel->getService('em')),
 ];
