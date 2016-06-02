@@ -62,7 +62,7 @@ echo -e "\033[32m* Download latest Roadiz dependencies - OK\033[0m";
 cp conf/config.default.yml conf/config.yml;
 echo -e "\033[32m* Make a copy of default configuration file - OK\033[0m";
 
-bin/roadiz config --generate-htaccess
+bin/roadiz generate:htaccess
 echo -e "\033[32m* Generate .htaccess files for Apache - OK\033[0m";
 
 cp $DEV_SAMPLE ./dev.php
