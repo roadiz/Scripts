@@ -1,35 +1,18 @@
 #!/usr/bin/env bash
 # Author: Ambroise Maupate
 # Contributor: Maxime Constantinian
+# Contributor: Maxime Bérard
+source `dirname $0`/methods.sh;
 
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-CYAN='\033[0;36m'
-ORANGE='\033[0;33m'
-# No Color
-NC='\033[0m'
-
-echo "${CYAN}------------------ ROADIZ CMS -------------------${NC}"
-echo "${CYAN}------- New Roadiz BaseTheme on `hostname` ------${NC}"
-echo "${CYAN}-------------------------------------------------${NC}"
+echo "${CYAN}---------------------------------- ROADIZ CMS ----------------------------------${NC}"
+echo "${CYAN}\tNew Roadiz website with BaseTheme on `hostname`${NC}"
+echo "${CYAN}--------------------------------------------------------------------------------${NC}"
 
 . `dirname $0`/config.sh || {
     echo "`dirname $0`/config.sh";
     echo "❌\t${RED}Impossible to import your configuration.${NC}";
     exit 1;
 }
-
-GIT=`command -v git`
-COMPOSER=`command -v composer`
-NPM=`command -v npm`
-BOWER=`command -v bower`
-SED=`command -v sed`
-FIND=`command -v find`
-GULP=`command -v gulp`
-DEV_SAMPLE="`pwd`/dev.sample.php"
-CACHE_SAMPLE="`pwd`/clear_cache.sample.php"
-MYSQL=`command -v mysql`;
-MYSQLTEST=`command -v mysql`;
 
 cd $APACHE_ROOT || {
     echo "❌\t${RED}Your apache directory does not exist. \tAborting.${NC}" ;
@@ -56,7 +39,6 @@ if [ $? -eq 0 ]; then
     read password;
     stty echo
 fi
-
 
 echo "${ORANGE}3. Choose a prefix for your Roadiz theme. Type it in CamelCase syntax and hit [ENTER].${NC}"
 echo "${ORANGE}For example 'MySuper' will generate a theme called 'MySuperTheme':${NC}";
@@ -90,7 +72,6 @@ if [ $? -eq 0 ]; then
     echo "✅\t${GREEN}Copy a sample dev.php file with LAN access and preview flag.${NC}";
 else
     echo "❌\t${RED}Impossible to copy a sample dev.php file. \tAborting.${NC}";
-    exit 1;
 fi
 
 cp -f $CACHE_SAMPLE $APACHE_ROOT$destination/clear_cache.php;
@@ -98,76 +79,26 @@ if [ $? -eq 0 ]; then
     echo "✅\t${GREEN}Copy a sample clear_cache.php file with LAN access.${NC}";
 else
     echo "❌\t${RED}Impossible to copy a sample clear_cache.php file. \tAborting.${NC}";
-    exit 1;
 fi
 
 #
 # BaseTheme
 #
-$GIT clone -b $THEME_BRANCH $THEME_URL ./themes/${theme_prefix}Theme || {
-    echo "❌\t${RED}Impossible to clone BaseTheme. \tAborting.${NC}" ;
-    exit 1;
-}
-echo "✅\t${GREEN}Download Base theme sources into themes folder.${NC}";
-
-cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme;
-
-rm -rf ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme/.git
-echo "✅\t${GREEN}Delete existing Git history.${NC}";
-
-mv BaseThemeApp.php ${theme_prefix}ThemeApp.php
-echo "✅\t${GREEN}Rename theme files against you theme name.${NC}";
-
-LC_ALL=C $FIND ./ -type f -exec $SED -i.bak -e "s/BaseTheme/${theme_prefix}Theme/g" {} \;
-LC_ALL=C $FIND ./ -type f -exec $SED -i.bak -e "s/Base theme/${theme_prefix} theme/g" {} \;
-LC_ALL=C $FIND ./static -type f -exec $SED -i.bak -e "s/Base/${theme_prefix}/g" {} \;
-LC_ALL=C $FIND ./ -type f -name '*.bak' -exec rm -f {} \;
-echo "✅\t${GREEN}Rename every occurrences of BaseTheme in your theme.${NC}";
-
-#
-# NPM, Bower, Gulp...
-#
-cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme;
-make;
-
-#
-# Git
-#
-cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme;
-$GIT init;
-$GIT add --all;
-$GIT commit -a -m "First commit";
-echo "✅\t${GREEN}Reinit Git repository and first commit.${NC}";
+createTheme;
 
 #
 # Installation MySQL
 #
-command -v mysql >/dev/null 2>&1
+installMySQL;
 if [ $? -eq 0 ]; then
-    Q1="CREATE DATABASE IF NOT EXISTS $destination;";
-    Q2="CREATE USER '$destination'@'$MYSQL_HOST' IDENTIFIED BY '$password';";
-    Q4="GRANT ALL PRIVILEGES ON \`$destination\`.* TO '$destination'@'$MYSQL_HOST' WITH GRANT OPTION;";
-
-    SQL="${Q1}${Q2}${Q4}";
-
-    $MYSQL -u$MYSQL_USER -p$MYSQL_PASS -e "$SQL" || {
-        echo "❌\t${RED}Impossible to create your site database. \tAborting.${NC}" ;
-        echo "${CYAN}--------------------------------------------------------------------------------${NC}"
-        echo "${CYAN}\tYour new website '$destination' has been created with NO database.${NC}"
-        echo "${CYAN}--------------------------------------------------------------------------------${NC}"
-        exit 1;
-    }
     echo "✅\t${GREEN}MySQL database and user created on `hostname`.${NC}";
-
     echo "${CYAN}--------------------------------------------------------------------------------${NC}"
     echo "${CYAN}\tYour new website '$destination' has been created with its own database.${NC}"
     echo "${CYAN}\tMySQL Database: '$destination' User: '$destination' Password: '$password'.${NC}"
     echo "${CYAN}--------------------------------------------------------------------------------${NC}"
 else
+    echo "❌\t${RED}Impossible to create your site database.${NC}" ;
     echo "${CYAN}--------------------------------------------------------------------------------${NC}"
     echo "${CYAN}\tYour new website '$destination' has been created with NO database.${NC}"
     echo "${CYAN}--------------------------------------------------------------------------------${NC}"
 fi
-
-
-

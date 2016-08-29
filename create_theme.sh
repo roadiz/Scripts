@@ -2,30 +2,17 @@
 # Author: Ambroise Maupate
 # Contributor: Maxime Constantinian
 # Contributor: Maxime Bérard
+source `dirname $0`/methods.sh;
 
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-CYAN='\033[0;36m'
-ORANGE='\033[0;33m'
-# No Color
-NC='\033[0m'
-
-echo "${CYAN}------------------ ROADIZ CMS -------------------${NC}"
-echo "${CYAN}------- New Roadiz BaseTheme on `hostname` ------${NC}"
-echo "${CYAN}-------------------------------------------------${NC}"
+echo "${CYAN}---------------------------------- ROADIZ CMS ----------------------------------${NC}"
+echo "${CYAN}\tNew BaseTheme on `hostname`.${NC}"
+echo "${CYAN}--------------------------------------------------------------------------------${NC}"
 
 . `dirname $0`/config.sh || {
     echo "`dirname $0`/config.sh";
     echo "❌\t${RED}Impossible to import your configuration.${NC}" ;
     exit 1;
 }
-
-GIT=`command -v git`
-NPM=`command -v npm`
-BOWER=`command -v bower`
-SED=`command -v sed`
-FIND=`command -v find`
-GULP=`command -v gulp`
 
 cd $APACHE_ROOT || {
     echo "❌\t${RED}Your apache directory does not exist. \tAborting.${NC}" ;
@@ -54,41 +41,7 @@ read theme_prefix;
 #
 # BaseTheme
 #
-$GIT clone -b $THEME_BRANCH $THEME_URL ./themes/${theme_prefix}Theme || {
-    echo "❌\t${RED}Impossible to clone BaseTheme. \tAborting.${NC}" ;
-    exit 1;
-}
-echo "✅\t${GREEN}Download Base theme sources into themes folder.${NC}";
-
-cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme;
-
-rm -rf ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme/.git
-echo "✅\t${GREEN}Delete existing Git history.${NC}";
-
-mv BaseThemeApp.php ${theme_prefix}ThemeApp.php
-echo "✅\t${GREEN}Rename theme files against you theme name.${NC}";
-
-LC_ALL=C $FIND ./ -type f -exec $SED -i.bak -e "s/BaseTheme/${theme_prefix}Theme/g" {} \;
-LC_ALL=C $FIND ./ -type f -exec $SED -i.bak -e "s/Base theme/${theme_prefix} theme/g" {} \;
-LC_ALL=C $FIND ./static -type f -exec $SED -i.bak -e "s/Base/${theme_prefix}/g" {} \;
-LC_ALL=C $FIND ./ -type f -name '*.bak' -exec rm -f {} \;
-echo "✅\t${GREEN}Rename every occurrences of BaseTheme in your theme.${NC}";
-
-#
-# NPM, Bower, Gulp...
-#
-cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme;
-make;
-
-#
-# Git
-#
-cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme;
-$GIT init;
-$GIT add --all;
-$GIT commit -am "First commit";
-echo "✅\t${GREEN}Reinit Git repository and first commit.${NC}";
-
+createTheme;
 
 echo "${CYAN}--------------------------------------------------------------------------------${NC}"
 echo "${CYAN}\tYour new theme for '$destination' site has been created.${NC}"
