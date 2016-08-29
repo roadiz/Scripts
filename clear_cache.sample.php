@@ -59,8 +59,7 @@ $allowedIp = [
 // Feel free to remove this, extend it, or make something more sophisticated.
 if (isset($_SERVER['HTTP_CLIENT_IP'])
     || isset($_SERVER['HTTP_X_FORWARDED_FOR'])
-    || (!IpUtils::checkIp(@$_SERVER['REMOTE_ADDR'], '192.168.1.0/24')
-        && !(in_array(@$_SERVER['REMOTE_ADDR'], $allowedIp))
+    || (!IpUtils::checkIp(@$_SERVER['REMOTE_ADDR'], '192.168.1.0/24') && !(in_array(@$_SERVER['REMOTE_ADDR'], $allowedIp))
     || php_sapi_name() === 'cli-server')
 ) {
     $response = new JsonResponse([

@@ -2,42 +2,64 @@
 # Author: Ambroise Maupate
 # Contributor: Maxime Constantinian
 
-echo -e "\033[36m------------------ ROADIZ CMS -------------------\033[0m"
-echo -e "\033[36m--------- New Roadiz website on `hostname` ------\033[0m"
-echo -e "\033[36m-------------------------------------------------\033[0m"
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+ORANGE='\033[0;33m'
+# No Color
+NC='\033[0m'
+
+echo "${CYAN}------------------ ROADIZ CMS -------------------${NC}"
+echo "${CYAN}------- New Roadiz BaseTheme on `hostname` ------${NC}"
+echo "${CYAN}-------------------------------------------------${NC}"
 
 . `dirname $0`/config.sh || {
     echo "`dirname $0`/config.sh";
-    echo 'Impossible to import your configuration.';
+    echo "❌\t${RED}Impossible to import your configuration.${NC}";
     exit 1;
 }
 
-GIT=`which git`
-COMPOSER=`which composer`
-NPM=`which npm`
-BOWER=`which bower`
-SED=`which sed`
-FIND=`which find`
-GULP=`which gulp`
-DEV_SAMPLE="`dirname $0`/dev.sample.php"
-CACHE_SAMPLE="`dirname $0`/clear_cache.sample.php"
+GIT=`command -v git`
+COMPOSER=`command -v composer`
+NPM=`command -v npm`
+BOWER=`command -v bower`
+SED=`command -v sed`
+FIND=`command -v find`
+GULP=`command -v gulp`
+DEV_SAMPLE="`pwd`/dev.sample.php"
+CACHE_SAMPLE="`pwd`/clear_cache.sample.php"
+MYSQL=`command -v mysql`;
+MYSQLTEST=`command -v mysql`;
 
 cd $APACHE_ROOT || {
-    echo 'Your apache directory does not exist.' ;
+    echo "❌\t${RED}Your apache directory does not exist. \tAborting.${NC}" ;
     exit 1;
 }
 
-echo -e "\033[33m1. Type your new website name and type [ENTER].\033[0m"
-echo -e "\033[33mThis name will be used for your web folder and your MySQL user and database name:\033[0m";
+command -v mysql >/dev/null 2>&1 || { echo "⚠️\t${RED}I require mysql but it's not installed, no database will be created.${NC}" >&2; }
+command -v git >/dev/null 2>&1 || { echo "❌\t${RED}I require git but it's not installed. \tAborting.${NC}" >&2; exit 1; }
+command -v composer >/dev/null 2>&1 || { echo "❌\t${RED}I require composer but it's not installed. \tAborting.${NC}" >&2; exit 1; }
+command -v npm >/dev/null 2>&1 || { echo "❌\t${RED}I require npm but it's not installed. \tAborting.${NC}" >&2; exit 1; }
+command -v bower >/dev/null 2>&1 || { echo "❌\t${RED}I require bower but it's not installed. \tAborting.${NC}" >&2; exit 1; }
+command -v sed >/dev/null 2>&1 || { echo "❌\t${RED}I require sed but it's not installed. \tAborting.${NC}" >&2; exit 1; }
+command -v find >/dev/null 2>&1 || { echo "❌\t${RED}I require find but it's not installed. \tAborting.${NC}" >&2; exit 1; }
+command -v gulp >/dev/null 2>&1 || { echo "❌\t${RED}I require gulp but it's not installed. \tAborting.${NC}" >&2; exit 1; }
+
+echo "${ORANGE}1. Type your new website name and type [ENTER].${NC}"
+echo "${ORANGE}This name will be used for your web folder and your MySQL user and database name:${NC}";
 read destination;
 
-echo -e "\033[33m2. Choose a password for your MySQL user and type [ENTER]:\033[0m";
-stty -echo
-read password;
-stty echo
+command -v mysql >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+    echo "${ORANGE}2. Choose a password for your MySQL user and type [ENTER]:${NC}";
+    stty -echo
+    read password;
+    stty echo
+fi
 
-echo -e "\033[33m3. Choose a prefix for your Roadiz theme. Type it in CamelCase syntax and hit [ENTER].\033[0m"
-echo -e "\033[33mFor example 'MySuper' will generate a theme called 'MySuperTheme':\033[0m";
+
+echo "${ORANGE}3. Choose a prefix for your Roadiz theme. Type it in CamelCase syntax and hit [ENTER].${NC}"
+echo "${ORANGE}For example 'MySuper' will generate a theme called 'MySuperTheme':${NC}";
 read theme_prefix;
 
 mkdir -p $destination;
@@ -47,74 +69,66 @@ cd $APACHE_ROOT$destination;
 # Roadiz
 #
 $GIT clone -b $ROADIZ_BRANCH $ROADIZ_URL ./ || {
-    echo 'Impossible to clone Roadiz.' ;
+    echo "❌\t${RED}Impossible to clone Roadiz. \tAborting.${NC}" ;
     exit 1;
 }
-echo -e "\033[32m* Download latest Roadiz sources - OK\033[0m";
+echo "✅\t${GREEN}Download latest Roadiz sources.${NC}";
 
-$COMPOSER install -n --no-dev || {
-    echo 'Impossible to use Composer.' ;
+$COMPOSER install -n --no-dev -o
+if [ $? -eq 0 ]; then
+    echo "✅\t${GREEN}Installed latest Roadiz dependencies with composer.${NC}";
+else
+    echo "❌\t${RED}Impossible to install Composer dependencies. \tAborting.${NC}" ;
     exit 1;
-}
-$COMPOSER dumpautoload -o;
-echo -e "\033[32m* Download latest Roadiz dependencies - OK\033[0m";
+fi
 
-cp conf/config.default.yml conf/config.yml;
-echo -e "\033[32m* Make a copy of default configuration file - OK\033[0m";
+bin/roadiz generate:htaccess;
+echo "✅\t${GREEN}Generate .htaccess files for Apache.${NC}";
 
-bin/roadiz generate:htaccess
-echo -e "\033[32m* Generate .htaccess files for Apache - OK\033[0m";
+cp -f $DEV_SAMPLE $APACHE_ROOT$destination/dev.php;
+if [ $? -eq 0 ]; then
+    echo "✅\t${GREEN}Copy a sample dev.php file with LAN access and preview flag.${NC}";
+else
+    echo "❌\t${RED}Impossible to copy a sample dev.php file. \tAborting.${NC}";
+    exit 1;
+fi
 
-cp $DEV_SAMPLE ./dev.php
-echo -e "\033[32m* Copy a sample dev.php file with LAN access and preview flag - OK\033[0m";
-
-cp $CACHE_SAMPLE ./clear_cache.php
-echo -e "\033[32m* Copy a sample clear_cache.php file with LAN access - OK\033[0m";
+cp -f $CACHE_SAMPLE $APACHE_ROOT$destination/clear_cache.php;
+if [ $? -eq 0 ]; then
+    echo "✅\t${GREEN}Copy a sample clear_cache.php file with LAN access.${NC}";
+else
+    echo "❌\t${RED}Impossible to copy a sample clear_cache.php file. \tAborting.${NC}";
+    exit 1;
+fi
 
 #
 # BaseTheme
 #
 $GIT clone -b $THEME_BRANCH $THEME_URL ./themes/${theme_prefix}Theme || {
-    echo 'Impossible to clone BaseTheme.' ;
+    echo "❌\t${RED}Impossible to clone BaseTheme. \tAborting.${NC}" ;
     exit 1;
 }
-echo -e "\033[32m* Download Base theme sources into themes folder - OK\033[0m";
+echo "✅\t${GREEN}Download Base theme sources into themes folder.${NC}";
 
 cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme;
 
 rm -rf ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme/.git
-echo -e "\033[32m* Delete existing Git history - OK\033[0m";
+echo "✅\t${GREEN}Delete existing Git history.${NC}";
 
 mv BaseThemeApp.php ${theme_prefix}ThemeApp.php
-echo -e "\033[32m* Rename theme files against you theme name - OK\033[0m";
+echo "✅\t${GREEN}Rename theme files against you theme name.${NC}";
 
 LC_ALL=C $FIND ./ -type f -exec $SED -i.bak -e "s/BaseTheme/${theme_prefix}Theme/g" {} \;
 LC_ALL=C $FIND ./ -type f -exec $SED -i.bak -e "s/Base theme/${theme_prefix} theme/g" {} \;
 LC_ALL=C $FIND ./static -type f -exec $SED -i.bak -e "s/Base/${theme_prefix}/g" {} \;
 LC_ALL=C $FIND ./ -type f -name '*.bak' -exec rm -f {} \;
-echo -e "\033[32m* Rename every occurrences of BaseTheme in your theme - OK\033[0m";
+echo "✅\t${GREEN}Rename every occurrences of BaseTheme in your theme.${NC}";
 
 #
-# Gulp
+# NPM, Bower, Gulp...
 #
-cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme/static;
-$NPM install || {
-    echo 'Impossible to install NPM.' ;
-    exit 1;
-}
-echo -e "\033[32m* Install Gulp for your theme - OK\033[0m";
-$BOWER install || {
-    echo 'Impossible to install Bower.' ;
-    exit 1;
-}
-echo -e "\033[32m* Install Bower for your theme - OK\033[0m";
-
-$GULP || {
-    echo 'Impossible to launch Gulp.' ;
-    exit 1;
-}
-echo -e "\033[32m* Launch Gulp for the first time - OK\033[0m";
-
+cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme;
+make;
 
 #
 # Git
@@ -123,24 +137,37 @@ cd ${APACHE_ROOT}${destination}/themes/${theme_prefix}Theme;
 $GIT init;
 $GIT add --all;
 $GIT commit -a -m "First commit";
-echo -e "\033[32m* Reinit Git repository and first commit - OK\033[0m";
+echo "✅\t${GREEN}Reinit Git repository and first commit.${NC}";
 
 #
 # Installation MySQL
 #
-MYSQL=`which mysql`;
+command -v mysql >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+    Q1="CREATE DATABASE IF NOT EXISTS $destination;";
+    Q2="CREATE USER '$destination'@'$MYSQL_HOST' IDENTIFIED BY '$password';";
+    Q4="GRANT ALL PRIVILEGES ON \`$destination\`.* TO '$destination'@'$MYSQL_HOST' WITH GRANT OPTION;";
 
-Q1="CREATE DATABASE IF NOT EXISTS $destination;";
-Q2="CREATE USER '$destination'@'$MYSQL_HOST' IDENTIFIED BY '$password';";
-Q4="GRANT ALL PRIVILEGES ON \`$destination\`.* TO '$destination'@'$MYSQL_HOST' WITH GRANT OPTION;";
+    SQL="${Q1}${Q2}${Q4}";
 
-SQL="${Q1}${Q2}${Q4}";
+    $MYSQL -u$MYSQL_USER -p$MYSQL_PASS -e "$SQL" || {
+        echo "❌\t${RED}Impossible to create your site database. \tAborting.${NC}" ;
+        echo "${CYAN}--------------------------------------------------------------------------------${NC}"
+        echo "${CYAN}\tYour new website '$destination' has been created with NO database.${NC}"
+        echo "${CYAN}--------------------------------------------------------------------------------${NC}"
+        exit 1;
+    }
+    echo "✅\t${GREEN}MySQL database and user created on `hostname`.${NC}";
+
+    echo "${CYAN}--------------------------------------------------------------------------------${NC}"
+    echo "${CYAN}\tYour new website '$destination' has been created with its own database.${NC}"
+    echo "${CYAN}\tMySQL Database: '$destination' User: '$destination' Password: '$password'.${NC}"
+    echo "${CYAN}--------------------------------------------------------------------------------${NC}"
+else
+    echo "${CYAN}--------------------------------------------------------------------------------${NC}"
+    echo "${CYAN}\tYour new website '$destination' has been created with NO database.${NC}"
+    echo "${CYAN}--------------------------------------------------------------------------------${NC}"
+fi
 
 
-$MYSQL -u$MYSQL_USER -p$MYSQL_PASS -e "$SQL";
-echo -e "\033[32m* MySQL database creation on `hostname` - OK\033[0m";
 
-echo -e "\033[33m--------------------------------------------------------------------------------\033[0m"
-echo -e "\033[33m--- Your new website '$destination' has been created with its own database -----\033[0m"
-echo -e "\033[33m-- MySQL Database: '$destination' User: '$destination' Password: '$password' ---\033[0m"
-echo -e "\033[33m--------------------------------------------------------------------------------\033[0m"

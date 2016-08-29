@@ -5,10 +5,10 @@
 APACHE_ROOT="/var/www/"
 
 ROADIZ_URL="https://github.com/roadiz/roadiz.git"
-ROADIZ_BRANCH="master"
+ROADIZ_BRANCH="develop"
 
 THEME_URL="https://github.com/roadiz/BaseTheme.git"
-THEME_BRANCH="master"
+THEME_BRANCH="develop"
 
 #
 # MySQL credentials
