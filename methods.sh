@@ -51,25 +51,25 @@ function createTheme {
 
     $GIT clone -b $THEME_BRANCH $THEME_URL $THEME_ROOT;
     if [ $? -eq 0 ]; then
-        echo "✅\t${GREEN}Download Base theme sources into themes folder.${NC}";
+        echo -e "✅\t${GREEN}Download Base theme sources into themes folder.${NC}";
     else
-        echo "❌\t${RED}Impossible to clone BaseTheme. \tAborting.${NC}" ;
+        echo -e "❌\t${RED}Impossible to clone BaseTheme. \tAborting.${NC}" ;
         return 1;
     fi
 
     cd ${THEME_ROOT};
 
     rm -rf ${THEME_ROOT}/.git
-    echo "✅\t${GREEN}Delete existing Git history.${NC}";
+    echo -e "✅\t${GREEN}Delete existing Git history.${NC}";
 
     mv BaseThemeApp.php ${theme_prefix}ThemeApp.php
-    echo "✅\t${GREEN}Rename theme files against you theme name.${NC}";
+    echo -e "✅\t${GREEN}Rename theme files against you theme name.${NC}";
 
     LC_ALL=C $FIND ./ -type f -exec $SED -i.bak -e "s/BaseTheme/${theme_prefix}Theme/g" {} \;
     LC_ALL=C $FIND ./ -type f -exec $SED -i.bak -e "s/Base theme/${theme_prefix} theme/g" {} \;
     LC_ALL=C $FIND ./static -type f -exec $SED -i.bak -e "s/Base/${theme_prefix}/g" {} \;
     LC_ALL=C $FIND ./ -type f -name '*.bak' -exec rm -f {} \;
-    echo "✅\t${GREEN}Rename every occurrences of BaseTheme in your theme.${NC}";
+    echo -e "✅\t${GREEN}Rename every occurrences of BaseTheme in your theme.${NC}";
 
     #
     # NPM, Bower, Gulp...
@@ -84,7 +84,7 @@ function createTheme {
     $GIT init;
     $GIT add --all;
     $GIT commit -a -m "First commit";
-    echo "✅\t${GREEN}Reinit Git repository and first commit.${NC}";
+    echo -e "✅\t${GREEN}Reinit Git repository and first commit.${NC}";
 
     return 0;
 }
